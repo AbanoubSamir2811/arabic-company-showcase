@@ -38,6 +38,7 @@ const App = () => (
 
           {/* Auth */}
           <Route path="/login" element={<Login />} />
+          <Route path="/signup" element={<Signup />} />
 
           {/* Dashboard */}
           <Route path="/dashboard" element={<DashboardLayout />}>
