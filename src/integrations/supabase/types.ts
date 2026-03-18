@@ -44,15 +44,16 @@ export type Database = {
         }
         Relationships: []
       }
-      products: {
+      offers: {
         Row: {
           created_at: string
           description: string | null
           id: string
           image_url: string | null
-          is_featured: boolean
-          name: string
+          is_active: boolean
+          link: string | null
           sort_order: number
+          title: string
           updated_at: string
         }
         Insert: {
@@ -60,9 +61,10 @@ export type Database = {
           description?: string | null
           id?: string
           image_url?: string | null
-          is_featured?: boolean
-          name: string
+          is_active?: boolean
+          link?: string | null
           sort_order?: number
+          title: string
           updated_at?: string
         }
         Update: {
@@ -70,8 +72,48 @@ export type Database = {
           description?: string | null
           id?: string
           image_url?: string | null
+          is_active?: boolean
+          link?: string | null
+          sort_order?: number
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      products: {
+        Row: {
+          created_at: string
+          description: string | null
+          discount_price: number | null
+          id: string
+          image_url: string | null
+          is_featured: boolean
+          name: string
+          price: number | null
+          sort_order: number
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          discount_price?: number | null
+          id?: string
+          image_url?: string | null
+          is_featured?: boolean
+          name: string
+          price?: number | null
+          sort_order?: number
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          discount_price?: number | null
+          id?: string
+          image_url?: string | null
           is_featured?: boolean
           name?: string
+          price?: number | null
           sort_order?: number
           updated_at?: string
         }
