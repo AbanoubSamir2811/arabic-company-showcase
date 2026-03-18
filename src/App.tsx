@@ -12,6 +12,7 @@ import About from "@/pages/About";
 import Products from "@/pages/Products";
 import Contact from "@/pages/Contact";
 import Login from "@/pages/Login";
+import Signup from "@/pages/Signup";
 import DashboardHome from "@/pages/dashboard/DashboardHome";
 import ProductsManagement from "@/pages/dashboard/ProductsManagement";
 import EmployeesManagement from "@/pages/dashboard/EmployeesManagement";
