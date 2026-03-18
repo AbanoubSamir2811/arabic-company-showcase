@@ -9,6 +9,7 @@ const navItems = [
   { label: 'من نحن', path: '/about' },
   { label: 'المنتجات', path: '/products' },
   { label: 'تواصل معنا', path: '/contact' },
+  { label: 'لوحة التحكم', path: '/dashboard' },
 ];
 
 export default function Navbar() {
