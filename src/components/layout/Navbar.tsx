@@ -1,8 +1,9 @@
 import { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Menu, X } from 'lucide-react';
+import { Menu, X, ShoppingCart } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useSiteSettings } from '@/hooks/use-site-settings';
+import { useCart } from '@/hooks/use-cart';
 
 const navItems = [
   { label: 'الرئيسية', path: '/' },
@@ -16,6 +17,7 @@ export default function Navbar() {
   const [open, setOpen] = useState(false);
   const location = useLocation();
   const { data: settings } = useSiteSettings();
+  const { totalItems } = useCart();
 
   return (
     <nav className="sticky top-0 z-50 bg-card/80 backdrop-blur-md border-b">
@@ -39,12 +41,34 @@ export default function Navbar() {
               {item.label}
             </Link>
           ))}
+          <Link to="/cart" className="relative mr-2">
+            <Button variant="ghost" size="icon">
+              <ShoppingCart className="h-5 w-5" />
+              {totalItems > 0 && (
+                <span className="absolute -top-1 -right-1 bg-primary text-primary-foreground text-xs rounded-full h-5 w-5 flex items-center justify-center font-bold">
+                  {totalItems}
+                </span>
+              )}
+            </Button>
+          </Link>
         </div>
 
         {/* Mobile toggle */}
-        <Button variant="ghost" size="icon" className="md:hidden" onClick={() => setOpen(!open)}>
-          {open ? <X /> : <Menu />}
-        </Button>
+        <div className="md:hidden flex items-center gap-2">
+          <Link to="/cart" className="relative">
+            <Button variant="ghost" size="icon">
+              <ShoppingCart className="h-5 w-5" />
+              {totalItems > 0 && (
+                <span className="absolute -top-1 -right-1 bg-primary text-primary-foreground text-xs rounded-full h-5 w-5 flex items-center justify-center font-bold">
+                  {totalItems}
+                </span>
+              )}
+            </Button>
+          </Link>
+          <Button variant="ghost" size="icon" onClick={() => setOpen(!open)}>
+            {open ? <X /> : <Menu />}
+          </Button>
+        </div>
       </div>
 
       {/* Mobile menu */}

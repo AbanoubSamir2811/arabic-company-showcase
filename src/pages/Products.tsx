@@ -1,10 +1,15 @@
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { Card, CardContent } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
-import { ShoppingBag } from 'lucide-react';
+import { ShoppingBag, ShoppingCart } from 'lucide-react';
+import { useCart } from '@/hooks/use-cart';
+import { toast } from '@/hooks/use-toast';
 
 export default function Products() {
+  const { addToCart } = useCart();
+
   const { data: products, isLoading } = useQuery({
     queryKey: ['products'],
     queryFn: async () => {
@@ -16,6 +21,17 @@ export default function Products() {
       return data;
     },
   });
+
+  const handleAddToCart = (product: any) => {
+    addToCart({
+      id: product.id,
+      name: product.name,
+      price: Number(product.price) || 0,
+      discount_price: product.discount_price ? Number(product.discount_price) : null,
+      image_url: product.image_url,
+    });
+    toast({ title: 'تمت الإضافة للسلة', description: `تم إضافة ${product.name} إلى السلة` });
+  };
 
   return (
     <>
@@ -59,7 +75,22 @@ export default function Products() {
                 </div>
                 <CardContent className="p-5">
                   <h3 className="font-bold text-lg mb-2">{product.name}</h3>
-                  <p className="text-muted-foreground text-sm line-clamp-3">{product.description}</p>
+                  <p className="text-muted-foreground text-sm line-clamp-3 mb-3">{product.description}</p>
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      {(product as any).discount_price ? (
+                        <>
+                          <span className="text-primary font-bold text-lg">{Number((product as any).discount_price).toFixed(2)} ر.س</span>
+                          <span className="text-muted-foreground line-through text-sm">{Number((product as any).price).toFixed(2)}</span>
+                        </>
+                      ) : (
+                        <span className="text-primary font-bold text-lg">{Number((product as any).price).toFixed(2)} ر.س</span>
+                      )}
+                    </div>
+                    <Button size="sm" onClick={() => handleAddToCart(product)}>
+                      <ShoppingCart className="h-4 w-4 ml-1" /> أضف للسلة
+                    </Button>
+                  </div>
                 </CardContent>
               </Card>
             ))}

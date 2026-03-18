@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Checkbox } from '@/components/ui/checkbox';
 import { toast } from '@/hooks/use-toast';
@@ -19,13 +19,15 @@ type Product = {
   image_url: string | null;
   is_featured: boolean;
   sort_order: number;
+  price: number;
+  discount_price: number | null;
 };
 
 export default function ProductsManagement() {
   const queryClient = useQueryClient();
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editing, setEditing] = useState<Product | null>(null);
-  const [form, setForm] = useState({ name: '', description: '', is_featured: false, sort_order: 0 });
+  const [form, setForm] = useState({ name: '', description: '', is_featured: false, sort_order: 0, price: 0, discount_price: '' });
   const [imageFile, setImageFile] = useState<File | null>(null);
 
   const { data: products, isLoading } = useQuery({
@@ -33,7 +35,7 @@ export default function ProductsManagement() {
     queryFn: async () => {
       const { data, error } = await supabase.from('products').select('*').order('sort_order');
       if (error) throw error;
-      return data;
+      return data as unknown as Product[];
     },
   });
 
@@ -44,16 +46,21 @@ export default function ProductsManagement() {
         image_url = await uploadImage(imageFile, 'products');
       }
 
+      const payload = {
+        name: form.name,
+        description: form.description,
+        image_url,
+        is_featured: form.is_featured,
+        sort_order: form.sort_order,
+        price: form.price,
+        discount_price: form.discount_price ? Number(form.discount_price) : null,
+      };
+
       if (editing) {
-        const { error } = await supabase
-          .from('products')
-          .update({ name: form.name, description: form.description, image_url, is_featured: form.is_featured, sort_order: form.sort_order })
-          .eq('id', editing.id);
+        const { error } = await supabase.from('products').update(payload as any).eq('id', editing.id);
         if (error) throw error;
       } else {
-        const { error } = await supabase
-          .from('products')
-          .insert({ name: form.name, description: form.description, image_url, is_featured: form.is_featured, sort_order: form.sort_order });
+        const { error } = await supabase.from('products').insert(payload as any);
         if (error) throw error;
       }
     },
@@ -77,7 +84,7 @@ export default function ProductsManagement() {
   });
 
   const resetForm = () => {
-    setForm({ name: '', description: '', is_featured: false, sort_order: 0 });
+    setForm({ name: '', description: '', is_featured: false, sort_order: 0, price: 0, discount_price: '' });
     setImageFile(null);
     setEditing(null);
     setDialogOpen(false);
@@ -85,7 +92,14 @@ export default function ProductsManagement() {
 
   const openEdit = (p: Product) => {
     setEditing(p);
-    setForm({ name: p.name, description: p.description ?? '', is_featured: p.is_featured, sort_order: p.sort_order });
+    setForm({
+      name: p.name,
+      description: p.description ?? '',
+      is_featured: p.is_featured,
+      sort_order: p.sort_order,
+      price: p.price,
+      discount_price: p.discount_price ? String(p.discount_price) : '',
+    });
     setDialogOpen(true);
   };
 
@@ -112,6 +126,16 @@ export default function ProductsManagement() {
               <div className="space-y-2">
                 <Label>الوصف</Label>
                 <Textarea value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} />
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label>السعر</Label>
+                  <Input type="number" step="0.01" min="0" value={form.price} onChange={(e) => setForm({ ...form, price: Number(e.target.value) })} required />
+                </div>
+                <div className="space-y-2">
+                  <Label>سعر العرض (اختياري)</Label>
+                  <Input type="number" step="0.01" min="0" value={form.discount_price} onChange={(e) => setForm({ ...form, discount_price: e.target.value })} placeholder="اتركه فارغ" />
+                </div>
               </div>
               <div className="space-y-2">
                 <Label>صورة المنتج</Label>
@@ -153,6 +177,16 @@ export default function ProductsManagement() {
               </div>
               <CardContent className="p-4">
                 <h3 className="font-bold mb-1">{p.name}</h3>
+                <div className="flex items-center gap-2 mb-2">
+                  {p.discount_price ? (
+                    <>
+                      <span className="text-primary font-bold">{p.discount_price.toFixed(2)} ر.س</span>
+                      <span className="text-muted-foreground line-through text-sm">{p.price.toFixed(2)}</span>
+                    </>
+                  ) : (
+                    <span className="text-primary font-bold">{p.price.toFixed(2)} ر.س</span>
+                  )}
+                </div>
                 <p className="text-sm text-muted-foreground line-clamp-2 mb-3">{p.description}</p>
                 {p.is_featured && (
                   <span className="text-xs bg-primary/10 text-primary px-2 py-0.5 rounded-full">مميز</span>

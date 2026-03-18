@@ -1,13 +1,18 @@
 import { Link } from 'react-router-dom';
-import { ArrowLeft, ShoppingBag, Star, Truck } from 'lucide-react';
+import { ArrowLeft, ShoppingBag, Star, Truck, ShoppingCart } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { useSiteSettings } from '@/hooks/use-site-settings';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
+import { useCart } from '@/hooks/use-cart';
+import { toast } from '@/hooks/use-toast';
+import OffersSlider from '@/components/OffersSlider';
 
 export default function Index() {
   const { data: settings } = useSiteSettings();
+  const { addToCart } = useCart();
+
   const { data: products } = useQuery({
     queryKey: ['featured-products'],
     queryFn: async () => {
@@ -21,6 +26,17 @@ export default function Index() {
       return data;
     },
   });
+
+  const handleAddToCart = (product: any) => {
+    addToCart({
+      id: product.id,
+      name: product.name,
+      price: Number(product.price) || 0,
+      discount_price: product.discount_price ? Number(product.discount_price) : null,
+      image_url: product.image_url,
+    });
+    toast({ title: 'تمت الإضافة للسلة', description: `تم إضافة ${product.name} إلى السلة` });
+  };
 
   return (
     <>
@@ -49,8 +65,11 @@ export default function Index() {
         <div className="absolute bottom-0 right-0 w-96 h-96 bg-primary/5 rounded-full translate-x-1/3 translate-y-1/3" />
       </section>
 
+      {/* Offers Slider */}
+      <OffersSlider />
+
       {/* Features */}
-      <section className="container mx-auto px-4 -mt-8 relative z-10">
+      <section className="container mx-auto px-4 py-12 relative z-10">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {[
             { icon: ShoppingBag, title: 'منتجات متنوعة', desc: 'تشكيلة واسعة من أفضل المنتجات' },
@@ -110,7 +129,22 @@ export default function Index() {
                 </div>
                 <CardContent className="p-5">
                   <h3 className="font-bold text-lg mb-2">{product.name}</h3>
-                  <p className="text-muted-foreground text-sm line-clamp-2">{product.description}</p>
+                  <p className="text-muted-foreground text-sm line-clamp-2 mb-3">{product.description}</p>
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      {(product as any).discount_price ? (
+                        <>
+                          <span className="text-primary font-bold">{Number((product as any).discount_price).toFixed(2)} ر.س</span>
+                          <span className="text-muted-foreground line-through text-sm">{Number((product as any).price).toFixed(2)}</span>
+                        </>
+                      ) : (
+                        <span className="text-primary font-bold">{Number((product as any).price).toFixed(2)} ر.س</span>
+                      )}
+                    </div>
+                    <Button size="sm" onClick={() => handleAddToCart(product)}>
+                      <ShoppingCart className="h-4 w-4 ml-1" /> أضف للسلة
+                    </Button>
+                  </div>
                 </CardContent>
               </Card>
             ))}

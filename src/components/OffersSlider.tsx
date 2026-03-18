@@ -5,6 +5,16 @@ import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Link } from 'react-router-dom';
 
+type Offer = {
+  id: string;
+  title: string;
+  description: string | null;
+  image_url: string | null;
+  link: string | null;
+  is_active: boolean;
+  sort_order: number;
+};
+
 export default function OffersSlider() {
   const [current, setCurrent] = useState(0);
 
@@ -12,12 +22,12 @@ export default function OffersSlider() {
     queryKey: ['active-offers'],
     queryFn: async () => {
       const { data, error } = await supabase
-        .from('offers')
+        .from('offers' as any)
         .select('*')
         .eq('is_active', true)
         .order('sort_order');
       if (error) throw error;
-      return data;
+      return data as unknown as Offer[];
     },
   });
 
@@ -69,7 +79,6 @@ export default function OffersSlider() {
         </div>
       </div>
 
-      {/* Navigation */}
       {offers.length > 1 && (
         <>
           <Button
@@ -89,7 +98,6 @@ export default function OffersSlider() {
             <ChevronLeft className="h-5 w-5" />
           </Button>
 
-          {/* Dots */}
           <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2">
             {offers.map((_, i) => (
               <button
