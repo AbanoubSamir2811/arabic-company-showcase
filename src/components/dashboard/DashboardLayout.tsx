@@ -1,7 +1,7 @@
 import { Navigate, Outlet, Link, useLocation } from 'react-router-dom';
 import { useAuth } from '@/hooks/use-auth';
 import { Button } from '@/components/ui/button';
-import { LayoutDashboard, Package, Users, Settings, LogOut, Home } from 'lucide-react';
+import { LayoutDashboard, Package, Users, UserCog, Settings, LogOut, Home } from 'lucide-react';
 import { Skeleton } from '@/components/ui/skeleton';
 
 export default function DashboardLayout() {
