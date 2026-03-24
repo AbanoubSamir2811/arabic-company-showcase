@@ -19,6 +19,7 @@ import DashboardHome from "@/pages/dashboard/DashboardHome";
 import ProductsManagement from "@/pages/dashboard/ProductsManagement";
 import EmployeesManagement from "@/pages/dashboard/EmployeesManagement";
 import SiteSettings from "@/pages/dashboard/SiteSettings";
+import UsersManagement from "@/pages/dashboard/UsersManagement";
 import NotFound from "@/pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -49,6 +50,7 @@ const App = () => (
               <Route index element={<DashboardHome />} />
               <Route path="products" element={<ProductsManagement />} />
               <Route path="employees" element={<EmployeesManagement />} />
+              <Route path="users" element={<UsersManagement />} />
               <Route path="settings" element={<SiteSettings />} />
             </Route>
 

@@ -1,7 +1,7 @@
 import { Navigate, Outlet, Link, useLocation } from 'react-router-dom';
 import { useAuth } from '@/hooks/use-auth';
 import { Button } from '@/components/ui/button';
-import { LayoutDashboard, Package, Users, Settings, LogOut, Home } from 'lucide-react';
+import { LayoutDashboard, Package, Users, UserCog, Settings, LogOut, Home } from 'lucide-react';
 import { Skeleton } from '@/components/ui/skeleton';
 
 export default function DashboardLayout() {
@@ -24,6 +24,7 @@ export default function DashboardLayout() {
     { label: 'لوحة التحكم', path: '/dashboard', icon: LayoutDashboard, roles: ['admin', 'manager', 'user'] },
     { label: 'المنتجات', path: '/dashboard/products', icon: Package, roles: ['admin', 'manager'] },
     { label: 'الموظفين', path: '/dashboard/employees', icon: Users, roles: ['admin'] },
+    { label: 'الحسابات', path: '/dashboard/users', icon: UserCog, roles: ['admin'] },
     { label: 'الإعدادات', path: '/dashboard/settings', icon: Settings, roles: ['admin'] },
   ].filter((item) => item.roles.includes(role));
 
