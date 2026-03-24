@@ -19,6 +19,7 @@ import DashboardHome from "@/pages/dashboard/DashboardHome";
 import ProductsManagement from "@/pages/dashboard/ProductsManagement";
 import EmployeesManagement from "@/pages/dashboard/EmployeesManagement";
 import SiteSettings from "@/pages/dashboard/SiteSettings";
+import UsersManagement from "@/pages/dashboard/UsersManagement";
 import NotFound from "@/pages/NotFound";
 
 const queryClient = new QueryClient();
