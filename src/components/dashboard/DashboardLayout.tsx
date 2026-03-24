@@ -24,6 +24,7 @@ export default function DashboardLayout() {
     { label: 'لوحة التحكم', path: '/dashboard', icon: LayoutDashboard, roles: ['admin', 'manager', 'user'] },
     { label: 'المنتجات', path: '/dashboard/products', icon: Package, roles: ['admin', 'manager'] },
     { label: 'الموظفين', path: '/dashboard/employees', icon: Users, roles: ['admin'] },
+    { label: 'الحسابات', path: '/dashboard/users', icon: UserCog, roles: ['admin'] },
     { label: 'الإعدادات', path: '/dashboard/settings', icon: Settings, roles: ['admin'] },
   ].filter((item) => item.roles.includes(role));
 
