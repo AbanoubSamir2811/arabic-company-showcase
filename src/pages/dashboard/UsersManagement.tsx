@@ -82,10 +82,23 @@ export default function UsersManagement() {
     onError: (e: Error) => toast({ title: 'خطأ', description: e.message, variant: 'destructive' }),
   });
 
+  const { role: currentRole } = useAuth();
+
   const handleRoleChange = (user: UserWithRole, value: string) => {
     if (user.user_id === currentUser?.id) {
       toast({ title: 'لا يمكنك تغيير صلاحيتك', variant: 'destructive' });
       return;
+    }
+    // Managers cannot change admin roles or promote to admin
+    if (currentRole === 'manager') {
+      if (user.role === 'admin') {
+        toast({ title: 'لا يمكنك التحكم في صلاحيات المسؤول', variant: 'destructive' });
+        return;
+      }
+      if (value === 'admin') {
+        toast({ title: 'لا يمكنك ترقية مستخدم إلى مسؤول', variant: 'destructive' });
+        return;
+      }
     }
     updateRoleMutation.mutate({
       userId: user.user_id,
@@ -144,7 +157,7 @@ export default function UsersManagement() {
                     <Select
                       value={u.role ?? 'none'}
                       onValueChange={(val) => handleRoleChange(u, val)}
-                      disabled={u.user_id === currentUser?.id || updateRoleMutation.isPending}
+                      disabled={u.user_id === currentUser?.id || (currentRole === 'manager' && u.role === 'admin') || updateRoleMutation.isPending}
                     >
                       <SelectTrigger className="w-32">
                         <SelectValue />
@@ -153,7 +166,7 @@ export default function UsersManagement() {
                         <SelectItem value="none">زائر</SelectItem>
                         <SelectItem value="user">موظف</SelectItem>
                         <SelectItem value="manager">مدير</SelectItem>
-                        <SelectItem value="admin">مسؤول</SelectItem>
+                        {currentRole === 'admin' && <SelectItem value="admin">مسؤول</SelectItem>}
                       </SelectContent>
                     </Select>
                   </TableCell>
