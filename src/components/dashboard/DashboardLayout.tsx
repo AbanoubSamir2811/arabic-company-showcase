@@ -16,15 +16,20 @@ export default function DashboardLayout() {
     );
   }
 
-  if (!user || !role) {
+  if (!user) {
     return <Navigate to="/login" replace />;
+  }
+
+  // Visitors (no role) go to the store
+  if (!role) {
+    return <Navigate to="/" replace />;
   }
 
   const navItems = [
     { label: 'لوحة التحكم', path: '/dashboard', icon: LayoutDashboard, roles: ['admin', 'manager', 'user'] },
-    { label: 'المنتجات', path: '/dashboard/products', icon: Package, roles: ['admin', 'manager'] },
-    { label: 'الموظفين', path: '/dashboard/employees', icon: Users, roles: ['admin'] },
-    { label: 'الحسابات', path: '/dashboard/users', icon: UserCog, roles: ['admin'] },
+    { label: 'المنتجات', path: '/dashboard/products', icon: Package, roles: ['admin', 'manager', 'user'] },
+    { label: 'الموظفين', path: '/dashboard/employees', icon: Users, roles: ['admin', 'manager'] },
+    { label: 'الحسابات', path: '/dashboard/users', icon: UserCog, roles: ['admin', 'manager'] },
     { label: 'الإعدادات', path: '/dashboard/settings', icon: Settings, roles: ['admin'] },
   ].filter((item) => item.roles.includes(role));
 
