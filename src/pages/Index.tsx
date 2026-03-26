@@ -8,10 +8,12 @@ import { supabase } from '@/integrations/supabase/client';
 import { useCart } from '@/hooks/use-cart';
 import { toast } from '@/hooks/use-toast';
 import OffersSlider from '@/components/OffersSlider';
+import { useLanguage } from '@/hooks/use-language';
 
 export default function Index() {
   const { data: settings } = useSiteSettings();
   const { addToCart } = useCart();
+  const { isArabic } = useLanguage();
 
   const { data: products } = useQuery({
     queryKey: ['featured-products'],
@@ -35,7 +37,10 @@ export default function Index() {
       discount_price: product.discount_price ? Number(product.discount_price) : null,
       image_url: product.image_url,
     });
-    toast({ title: 'تمت الإضافة للسلة', description: `تم إضافة ${product.name} إلى السلة` });
+    toast({
+      title: isArabic ? 'تمت الإضافة للسلة' : 'Added to cart',
+      description: isArabic ? `تم إضافة ${product.name} إلى السلة` : `${product.name} added to your cart`,
+    });
   };
 
   return (
@@ -45,7 +50,7 @@ export default function Index() {
         <div className="container mx-auto px-4 py-20 md:py-32">
           <div className="max-w-2xl">
             <h1 className="text-4xl md:text-6xl font-extrabold text-foreground leading-tight mb-6">
-              مرحباً بكم في{' '}
+              {isArabic ? 'مرحباً بكم في' : 'Welcome to'}{' '}
               <span className="text-primary">{settings?.company_name}</span>
             </h1>
             <p className="text-lg md:text-xl text-muted-foreground mb-8 leading-relaxed">
@@ -53,10 +58,10 @@ export default function Index() {
             </p>
             <div className="flex flex-wrap gap-4">
               <Button size="lg" asChild>
-                <Link to="/products">تصفح المنتجات</Link>
+                <Link to="/products">{isArabic ? 'تصفح المنتجات' : 'Browse Products'}</Link>
               </Button>
               <Button size="lg" variant="outline" asChild>
-                <Link to="/contact">تواصل معنا</Link>
+                <Link to="/contact">{isArabic ? 'تواصل معنا' : 'Contact Us'}</Link>
               </Button>
             </div>
           </div>
@@ -72,9 +77,21 @@ export default function Index() {
       <section className="container mx-auto px-4 py-12 relative z-10">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {[
-            { icon: ShoppingBag, title: 'منتجات متنوعة', desc: 'تشكيلة واسعة من أفضل المنتجات' },
-            { icon: Star, title: 'جودة عالية', desc: 'نلتزم بأعلى معايير الجودة' },
-            { icon: Truck, title: 'توصيل سريع', desc: 'نوصل طلبك بأسرع وقت ممكن' },
+            {
+              icon: ShoppingBag,
+              title: isArabic ? 'منتجات متنوعة' : 'Varied Products',
+              desc: isArabic ? 'تشكيلة واسعة من أفضل المنتجات' : 'A wide selection of top products',
+            },
+            {
+              icon: Star,
+              title: isArabic ? 'جودة عالية' : 'High Quality',
+              desc: isArabic ? 'نلتزم بأعلى معايير الجودة' : 'We follow the highest quality standards',
+            },
+            {
+              icon: Truck,
+              title: isArabic ? 'توصيل سريع' : 'Fast Delivery',
+              desc: isArabic ? 'نوصل طلبك بأسرع وقت ممكن' : 'We deliver your order as fast as possible',
+            },
           ].map((f, i) => (
             <Card key={i} className="text-center p-6 hover:shadow-lg transition-shadow">
               <CardContent className="pt-4">
@@ -92,15 +109,15 @@ export default function Index() {
       {/* About snippet */}
       <section className="container mx-auto px-4 py-16">
         <div className="max-w-3xl mx-auto text-center">
-          <h2 className="text-3xl font-bold mb-6">من نحن</h2>
+          <h2 className="text-3xl font-bold mb-6">{isArabic ? 'من نحن' : 'About Us'}</h2>
           <p className="text-muted-foreground leading-relaxed text-lg">
-            نحن متجر متخصص في تقديم أفضل المنتجات المختارة بعناية. نسعى لتوفير
-            تجربة تسوق مميزة لعملائنا من خلال تقديم منتجات عالية الجودة بأسعار
-            تنافسية وخدمة عملاء متميزة.
+            {isArabic
+              ? 'نحن متجر متخصص في تقديم أفضل المنتجات المختارة بعناية. نسعى لتوفير تجربة تسوق مميزة لعملائنا من خلال تقديم منتجات عالية الجودة بأسعار تنافسية وخدمة عملاء متميزة.'
+              : 'We are a store specialized in carefully selected products. We aim to provide a great shopping experience through quality products, competitive prices, and excellent support.'}
           </p>
           <Button variant="link" asChild className="mt-4">
             <Link to="/about">
-              اعرف المزيد <ArrowLeft className="h-4 w-4 mr-1" />
+              {isArabic ? 'اعرف المزيد' : 'Learn More'} <ArrowLeft className="h-4 w-4 mr-1" />
             </Link>
           </Button>
         </div>
@@ -109,7 +126,7 @@ export default function Index() {
       {/* Featured Products */}
       {products && products.length > 0 && (
         <section className="container mx-auto px-4 py-16">
-          <h2 className="text-3xl font-bold text-center mb-10">منتجاتنا المميزة</h2>
+          <h2 className="text-3xl font-bold text-center mb-10">{isArabic ? 'منتجاتنا المميزة' : 'Featured Products'}</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {products.map((product) => (
               <Card key={product.id} className="overflow-hidden hover:shadow-lg transition-shadow group">
@@ -142,7 +159,7 @@ export default function Index() {
                       )}
                     </div>
                     <Button size="sm" onClick={() => handleAddToCart(product)}>
-                      <ShoppingCart className="h-4 w-4 ml-1" /> أضف للسلة
+                      <ShoppingCart className="h-4 w-4 ml-1" /> {isArabic ? 'أضف للسلة' : 'Add to cart'}
                     </Button>
                   </div>
                 </CardContent>
@@ -151,7 +168,7 @@ export default function Index() {
           </div>
           <div className="text-center mt-8">
             <Button variant="outline" asChild>
-              <Link to="/products">عرض جميع المنتجات</Link>
+              <Link to="/products">{isArabic ? 'عرض جميع المنتجات' : 'View all products'}</Link>
             </Button>
           </div>
         </section>

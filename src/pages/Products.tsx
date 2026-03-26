@@ -6,9 +6,11 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { ShoppingBag, ShoppingCart } from 'lucide-react';
 import { useCart } from '@/hooks/use-cart';
 import { toast } from '@/hooks/use-toast';
+import { useLanguage } from '@/hooks/use-language';
 
 export default function Products() {
   const { addToCart } = useCart();
+  const { isArabic } = useLanguage();
 
   const { data: products, isLoading } = useQuery({
     queryKey: ['products'],
@@ -30,15 +32,20 @@ export default function Products() {
       discount_price: product.discount_price ? Number(product.discount_price) : null,
       image_url: product.image_url,
     });
-    toast({ title: 'تمت الإضافة للسلة', description: `تم إضافة ${product.name} إلى السلة` });
+    toast({
+      title: isArabic ? 'تمت الإضافة للسلة' : 'Added to cart',
+      description: isArabic ? `تم إضافة ${product.name} إلى السلة` : `${product.name} added to your cart`,
+    });
   };
 
   return (
     <>
       <section className="bg-gradient-to-bl from-primary/10 via-background to-accent/20 py-16">
         <div className="container mx-auto px-4 text-center">
-          <h1 className="text-4xl font-extrabold mb-4">منتجاتنا</h1>
-          <p className="text-muted-foreground text-lg">اكتشف تشكيلتنا المتنوعة من المنتجات</p>
+          <h1 className="text-4xl font-extrabold mb-4">{isArabic ? 'منتجاتنا' : 'Our Products'}</h1>
+          <p className="text-muted-foreground text-lg">
+            {isArabic ? 'اكتشف تشكيلتنا المتنوعة من المنتجات' : 'Discover our wide range of products'}
+          </p>
         </div>
       </section>
 
@@ -88,7 +95,7 @@ export default function Products() {
                       )}
                     </div>
                     <Button size="sm" onClick={() => handleAddToCart(product)}>
-                      <ShoppingCart className="h-4 w-4 ml-1" /> أضف للسلة
+                      <ShoppingCart className="h-4 w-4 ml-1" /> {isArabic ? 'أضف للسلة' : 'Add to cart'}
                     </Button>
                   </div>
                 </CardContent>
@@ -98,7 +105,7 @@ export default function Products() {
         ) : (
           <div className="text-center py-20 text-muted-foreground">
             <ShoppingBag className="h-16 w-16 mx-auto mb-4 opacity-50" />
-            <p className="text-lg">لا توجد منتجات حالياً</p>
+            <p className="text-lg">{isArabic ? 'لا توجد منتجات حالياً' : 'No products available right now'}</p>
           </div>
         )}
       </section>

@@ -3,17 +3,25 @@ import { useCart } from '@/hooks/use-cart';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Trash2, Plus, Minus, ShoppingCart, ArrowRight } from 'lucide-react';
+import { useLanguage } from '@/hooks/use-language';
 
 export default function Cart() {
   const { items, removeFromCart, updateQuantity, clearCart, totalPrice } = useCart();
+  const { isArabic } = useLanguage();
 
   return (
     <>
       <section className="bg-gradient-to-bl from-primary/10 via-background to-accent/20 py-16">
         <div className="container mx-auto px-4 text-center">
-          <h1 className="text-4xl font-extrabold mb-4">سلة المشتريات</h1>
+          <h1 className="text-4xl font-extrabold mb-4">{isArabic ? 'سلة المشتريات' : 'Shopping Cart'}</h1>
           <p className="text-muted-foreground text-lg">
-            {items.length > 0 ? `لديك ${items.length} منتج في السلة` : 'السلة فارغة'}
+            {items.length > 0
+              ? isArabic
+                ? `لديك ${items.length} منتج في السلة`
+                : `You have ${items.length} item(s) in cart`
+              : isArabic
+                ? 'السلة فارغة'
+                : 'Your cart is empty'}
           </p>
         </div>
       </section>
@@ -22,9 +30,9 @@ export default function Cart() {
         {items.length === 0 ? (
           <div className="text-center py-20 text-muted-foreground">
             <ShoppingCart className="h-16 w-16 mx-auto mb-4 opacity-50" />
-            <p className="text-lg mb-4">سلة المشتريات فارغة</p>
+            <p className="text-lg mb-4">{isArabic ? 'سلة المشتريات فارغة' : 'Shopping cart is empty'}</p>
             <Button asChild>
-              <Link to="/products">تصفح المنتجات</Link>
+              <Link to="/products">{isArabic ? 'تصفح المنتجات' : 'Browse products'}</Link>
             </Button>
           </div>
         ) : (
@@ -75,7 +83,7 @@ export default function Cart() {
             <div>
               <Card className="sticky top-24">
                 <CardContent className="p-6 space-y-4">
-                  <h3 className="font-bold text-lg">ملخص الطلب</h3>
+                  <h3 className="font-bold text-lg">{isArabic ? 'ملخص الطلب' : 'Order Summary'}</h3>
                   <div className="space-y-2 text-sm">
                     {items.map((item) => (
                       <div key={item.id} className="flex justify-between">
@@ -85,18 +93,18 @@ export default function Cart() {
                     ))}
                   </div>
                   <div className="border-t pt-4 flex justify-between font-bold text-lg">
-                    <span>الإجمالي</span>
+                    <span>{isArabic ? 'الإجمالي' : 'Total'}</span>
                     <span className="text-primary">{totalPrice.toFixed(2)} ر.س</span>
                   </div>
                   <Button className="w-full" size="lg">
-                    إتمام الشراء
+                    {isArabic ? 'إتمام الشراء' : 'Checkout'}
                   </Button>
                   <Button variant="outline" className="w-full" onClick={clearCart}>
-                    تفريغ السلة
+                    {isArabic ? 'تفريغ السلة' : 'Clear cart'}
                   </Button>
                   <Button variant="link" className="w-full" asChild>
                     <Link to="/products">
-                      <ArrowRight className="h-4 w-4 ml-1" /> متابعة التسوق
+                      <ArrowRight className="h-4 w-4 ml-1" /> {isArabic ? 'متابعة التسوق' : 'Continue shopping'}
                     </Link>
                   </Button>
                 </CardContent>

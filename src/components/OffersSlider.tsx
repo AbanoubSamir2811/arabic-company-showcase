@@ -4,6 +4,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Link } from 'react-router-dom';
+import { useLanguage } from '@/hooks/use-language';
 
 type Offer = {
   id: string;
@@ -17,6 +18,7 @@ type Offer = {
 
 export default function OffersSlider() {
   const [current, setCurrent] = useState(0);
+  const { language, isArabic } = useLanguage();
 
   const { data: offers } = useQuery({
     queryKey: ['active-offers'],
@@ -59,7 +61,7 @@ export default function OffersSlider() {
         <div className="flex items-center gap-8">
           <div className="flex-1 min-w-0">
             <span className="inline-block bg-primary text-primary-foreground text-xs font-bold px-3 py-1 rounded-full mb-4">
-              عرض خاص
+              {isArabic ? 'عرض خاص' : 'Special Offer'}
             </span>
             <h2 className="text-3xl md:text-5xl font-extrabold mb-4 leading-tight">{offer.title}</h2>
             {offer.description && (
@@ -67,7 +69,7 @@ export default function OffersSlider() {
             )}
             {offer.link && (
               <Button size="lg" asChild>
-                <Link to={offer.link}>تسوق الآن</Link>
+                <Link to={offer.link}>{isArabic ? 'تسوق الآن' : 'Shop Now'}</Link>
               </Button>
             )}
           </div>
@@ -86,6 +88,7 @@ export default function OffersSlider() {
             variant="secondary"
             className="absolute right-4 top-1/2 -translate-y-1/2 rounded-full opacity-70 hover:opacity-100"
             onClick={prev}
+            aria-label={language === 'ar' ? 'السابق' : 'Previous'}
           >
             <ChevronRight className="h-5 w-5" />
           </Button>
@@ -94,6 +97,7 @@ export default function OffersSlider() {
             variant="secondary"
             className="absolute left-4 top-1/2 -translate-y-1/2 rounded-full opacity-70 hover:opacity-100"
             onClick={next}
+            aria-label={language === 'ar' ? 'التالي' : 'Next'}
           >
             <ChevronLeft className="h-5 w-5" />
           </Button>
